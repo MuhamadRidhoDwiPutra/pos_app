@@ -8,7 +8,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => view('welcome'));
+Route::get('/', fn () => redirect()->route('login'));
 
 Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth'])
