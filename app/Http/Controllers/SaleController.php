@@ -31,26 +31,30 @@ class SaleController extends Controller
 
     public function store(SaleRequest $request): RedirectResponse
     {
-        $product = Product::findOrFail($request->product_id);
+        try {
+            DB::transaction(function () use ($request) {
+                $product = Product::where('id', $request->product_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
-        if ($product->stock < $request->qty) {
+                if ($product->stock < $request->qty) {
+                    throw new \Exception('Stok tidak mencukupi.');
+                }
+
+                Sale::create([
+                    'product_id' => $product->id,
+                    'qty' => $request->qty,
+                    'total_harga' => $product->harga * $request->qty,
+                ]);
+
+                $product->decrement('stock', $request->qty);
+            });
+        } catch (\Exception $e) {
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', 'Stok tidak mencukupi. Stok tersedia: ' . $product->stock);
+                ->with('error', 'Stok tidak mencukupi. Stok tersedia: ' . Product::find($request->product_id)?->stock ?? 0);
         }
-
-        $totalHarga = $product->harga * $request->qty;
-
-        DB::transaction(function () use ($request, $product, $totalHarga) {
-            Sale::create([
-                'product_id' => $product->id,
-                'qty' => $request->qty,
-                'total_harga' => $totalHarga,
-            ]);
-
-            $product->decrement('stock', $request->qty);
-        });
 
         return redirect()
             ->route('sales.index')

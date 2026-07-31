@@ -7,8 +7,8 @@ use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class PurchaseController extends Controller
 {
@@ -31,15 +31,16 @@ class PurchaseController extends Controller
 
     public function store(PurchaseRequest $request): RedirectResponse
     {
-        $product = Product::findOrFail($request->product_id);
-        $totalHarga = $product->harga * $request->qty;
+        DB::transaction(function () use ($request) {
+            $product = Product::where('id', $request->product_id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        DB::transaction(function () use ($request, $product, $totalHarga) {
             Purchase::create([
                 'supplier_id' => $request->supplier_id,
                 'product_id' => $product->id,
                 'qty' => $request->qty,
-                'total_harga' => $totalHarga,
+                'total_harga' => $product->harga * $request->qty,
             ]);
 
             $product->increment('stock', $request->qty);
