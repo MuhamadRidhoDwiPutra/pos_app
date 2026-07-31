@@ -33,7 +33,7 @@
                         <div class="mb-3">
                             <label for="nama_barang" class="form-label">Nama Barang</label>
                             <input type="text" name="nama_barang" id="nama_barang" class="form-control" value="{{ old('nama_barang', $product->nama_barang) }}">
-                            @error('nama_barat')
+                            @error('nama_barang')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
                         </div>
