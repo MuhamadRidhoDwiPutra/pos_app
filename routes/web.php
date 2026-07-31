@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,9 @@ Route::get('/dashboard', fn () => view('dashboard'))
 Route::middleware('auth')->group(function () {
     // Supplier CRUD
     Route::resource('suppliers', SupplierController::class);
+
+    // Product CRUD
+    Route::resource('products', ProductController::class);
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
