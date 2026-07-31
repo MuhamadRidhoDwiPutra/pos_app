@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,9 @@ Route::middleware('auth')->group(function () {
 
     // Purchase Transaction
     Route::resource('purchases', PurchaseController::class);
+
+    // Sales Transaction
+    Route::resource('sales', SaleController::class);
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
