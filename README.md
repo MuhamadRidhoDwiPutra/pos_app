@@ -16,7 +16,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Setelah itu, setting database di file `.env`:
+Setting database di file `.env`:
 
 ```
 DB_CONNECTION=pgsql
@@ -43,6 +43,15 @@ Buka browser ke `http://127.0.0.1:8000`.
 Email: admin@pos.app
 Password: password
 ```
+
+## Data Contoh
+
+Seeder sudah menyediakan data awal untuk testing:
+
+- **Supplier**: 2 data (SUP-001 PT Maju Jaya, SUP-002 CV Berkah Sentosa)
+- **Barang**: 5 data (Mie Instan, Sabun Mandi, Shampo Botol, Minuman Kemasan, Biskuit)
+- **Pembelian**: 2 transaksi contoh
+- **Penjualan**: 3 transaksi contoh (Shampo, Minuman, Biskuit)
 
 ## Fitur yang Ada
 
