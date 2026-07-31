@@ -12,7 +12,6 @@ class ProductController extends Controller
     public function index(): View
     {
         $products = Product::latest()->paginate(10);
-
         return view('products.index', compact('products'));
     }
 
@@ -24,10 +23,7 @@ class ProductController extends Controller
     public function store(ProductRequest $request): RedirectResponse
     {
         Product::create($request->validated());
-
-        return redirect()
-            ->route('products.index')
-            ->with('success', 'Barang berhasil ditambahkan.');
+        return redirect()->route('products.index')->with('success', 'Barang berhasil ditambahkan.');
     }
 
     public function show(Product $product): View
@@ -43,18 +39,12 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product): RedirectResponse
     {
         $product->update($request->validated());
-
-        return redirect()
-            ->route('products.index')
-            ->with('success', 'Barang berhasil diperbarui.');
+        return redirect()->route('products.index')->with('success', 'Barang berhasil diperbarui.');
     }
 
     public function destroy(Product $product): RedirectResponse
     {
         $product->delete();
-
-        return redirect()
-            ->route('products.index')
-            ->with('success', 'Barang berhasil dihapus.');
+        return redirect()->route('products.index')->with('success', 'Barang berhasil dihapus.');
     }
 }

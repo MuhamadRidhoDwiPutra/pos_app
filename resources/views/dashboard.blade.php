@@ -4,7 +4,6 @@
 <div class="container py-4">
     <h3 class="mb-4">Dashboard</h3>
 
-    {{-- Summary Cards --}}
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card text-white bg-primary h-100">
@@ -40,7 +39,6 @@
         </div>
     </div>
 
-    {{-- Chart --}}
     <div class="row mb-4">
         <div class="col-md-8">
             <div class="card">
@@ -53,7 +51,6 @@
                     @else
                         <div class="text-center text-muted py-5">
                             <p class="mb-1">Belum ada data penjualan</p>
-                            <small>Transaksi penjualan akan ditampilkan di grafik ini</small>
                         </div>
                     @endif
                 </div>
@@ -92,7 +89,6 @@
         </div>
     </div>
 
-    {{-- Recent Transactions --}}
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">Transaksi Terbaru</h5>

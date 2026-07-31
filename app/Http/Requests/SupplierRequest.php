@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SupplierRequest extends FormRequest
@@ -14,22 +13,17 @@ class SupplierRequest extends FormRequest
 
     public function rules(): array
     {
-        $supplierId = $this->route('supplier')?->id;
-
-        $rules = [
+        $id = $this->route('supplier')?->id;
+        return [
             'no_supplier' => [
                 'required',
                 'string',
                 'max:50',
-                $supplierId
-                    ? 'unique:suppliers,no_supplier,' . $supplierId
-                    : 'unique:suppliers,no_supplier',
+                $id ? "unique:suppliers,no_supplier,{$id}" : 'unique:suppliers,no_supplier',
             ],
-            'nama_pic' => ['required', 'string', 'max:100'],
-            'alamat' => ['nullable', 'string'],
+            'nama_pic' => 'required|string|max:100',
+            'alamat' => 'nullable|string',
         ];
-
-        return $rules;
     }
 
     public function messages(): array

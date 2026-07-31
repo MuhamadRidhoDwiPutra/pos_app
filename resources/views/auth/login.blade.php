@@ -3,8 +3,8 @@
         <div class="card-body p-4">
             <div class="text-center mb-4">
                 <x-application-logo class="mb-3" />
-                <h4 class="mb-1">{{ config('app.name', 'POS App') }}</h4>
-                <p class="text-muted small mb-0">Login Admin</p>
+                <h4 class="mb-1">POS App</h4>
+                <p class="text-muted small mb-0">Login</p>
             </div>
 
             <x-auth-session-status class="alert alert-success py-2" :status="session('status')" />

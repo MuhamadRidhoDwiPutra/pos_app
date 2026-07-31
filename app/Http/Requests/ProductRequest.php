@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProductRequest extends FormRequest
@@ -14,24 +13,19 @@ class ProductRequest extends FormRequest
 
     public function rules(): array
     {
-        $productId = $this->route('product')?->id;
-
-        $rules = [
+        $id = $this->route('product')?->id;
+        return [
             'kode_barang' => [
                 'required',
                 'string',
                 'max:50',
-                $productId
-                    ? 'unique:products,kode_barang,' . $productId
-                    : 'unique:products,kode_barang',
+                $id ? "unique:products,kode_barang,{$id}" : 'unique:products,kode_barang',
             ],
-            'nama_barang' => ['required', 'string', 'max:150'],
-            'tanggal_expired' => ['nullable', 'date', 'after_or_equal:today'],
-            'stock' => ['required', 'integer', 'min:0'],
-            'harga' => ['required', 'numeric', 'min:0'],
+            'nama_barang' => 'required|string|max:150',
+            'tanggal_expired' => 'nullable|date|after_or_equal:today',
+            'stock' => 'required|integer|min:0',
+            'harga' => 'required|numeric|min:0',
         ];
-
-        return $rules;
     }
 
     public function messages(): array

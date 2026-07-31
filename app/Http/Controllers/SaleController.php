@@ -13,19 +13,13 @@ class SaleController extends Controller
 {
     public function index(): View
     {
-        $sales = Sale::with('product')
-            ->latest()
-            ->paginate(10);
-
+        $sales = Sale::with('product')->latest()->paginate(10);
         return view('sales.index', compact('sales'));
     }
 
     public function create(): View
     {
-        $products = Product::where('stock', '>', 0)
-            ->orderBy('nama_barang')
-            ->get();
-
+        $products = Product::where('stock', '>', 0)->orderBy('nama_barang')->get();
         return view('sales.create', compact('products'));
     }
 
@@ -33,9 +27,7 @@ class SaleController extends Controller
     {
         try {
             DB::transaction(function () use ($request) {
-                $product = Product::where('id', $request->product_id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
+                $product = Product::where('id', $request->product_id)->lockForUpdate()->firstOrFail();
 
                 if ($product->stock < $request->qty) {
                     throw new \Exception('Stok tidak mencukupi.');
@@ -50,31 +42,21 @@ class SaleController extends Controller
                 $product->decrement('stock', $request->qty);
             });
         } catch (\Exception $e) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('error', 'Stok tidak mencukupi. Stok tersedia: ' . Product::find($request->product_id)?->stock ?? 0);
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
 
-        return redirect()
-            ->route('sales.index')
-            ->with('success', 'Penjualan berhasil. Stok barang diperbarui.');
+        return redirect()->route('sales.index')->with('success', 'Penjualan berhasil disimpan.');
     }
 
     public function show(Sale $sale): View
     {
         $sale->load('product');
-
         return view('sales.show', compact('sale'));
     }
 
     public function edit(Sale $sale): View
     {
-        $products = Product::where('stock', '>', 0)
-            ->orWhere('id', $sale->product_id)
-            ->orderBy('nama_barang')
-            ->get();
-
+        $products = Product::where('stock', '>', 0)->orWhere('id', $sale->product_id)->orderBy('nama_barang')->get();
         return view('sales.edit', compact('sale', 'products'));
     }
 
@@ -84,18 +66,17 @@ class SaleController extends Controller
             DB::transaction(function () use ($request, $sale) {
                 $product = Product::where('id', $sale->product_id)->first();
                 $newProduct = Product::where('id', $request->product_id)->lockForUpdate()->first();
-
                 $oldQty = $sale->qty;
 
                 if ($sale->product_id == $request->product_id) {
-                    $stockDiff = $request->qty - $oldQty;
-                    if ($stockDiff > 0) {
-                        if ($newProduct->stock < $stockDiff) {
+                    $diff = $request->qty - $oldQty;
+                    if ($diff > 0) {
+                        if ($newProduct->stock < $diff) {
                             throw new \Exception('Stok tidak mencukupi.');
                         }
-                        $newProduct->decrement('stock', $stockDiff);
-                    } elseif ($stockDiff < 0) {
-                        $newProduct->increment('stock', abs($stockDiff));
+                        $newProduct->decrement('stock', $diff);
+                    } elseif ($diff < 0) {
+                        $newProduct->increment('stock', abs($diff));
                     }
                 } else {
                     $product->increment('stock', $oldQty);
@@ -112,15 +93,10 @@ class SaleController extends Controller
                 ]);
             });
         } catch (\Exception $e) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('error', $e->getMessage() . ' Stok tersedia: ' . Product::find($request->product_id)?->stock ?? 0);
+            return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
 
-        return redirect()
-            ->route('sales.index')
-            ->with('success', 'Penjualan berhasil diperbarui.');
+        return redirect()->route('sales.index')->with('success', 'Penjualan berhasil diperbarui.');
     }
 
     public function destroy(Sale $sale): RedirectResponse
@@ -133,8 +109,6 @@ class SaleController extends Controller
             $sale->delete();
         });
 
-        return redirect()
-            ->route('sales.index')
-            ->with('success', 'Penjualan berhasil dihapus.');
+        return redirect()->route('sales.index')->with('success', 'Penjualan berhasil dihapus.');
     }
 }

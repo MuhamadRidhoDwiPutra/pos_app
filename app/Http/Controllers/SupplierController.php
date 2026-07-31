@@ -12,7 +12,6 @@ class SupplierController extends Controller
     public function index(): View
     {
         $suppliers = Supplier::latest()->paginate(10);
-
         return view('suppliers.index', compact('suppliers'));
     }
 
@@ -24,10 +23,7 @@ class SupplierController extends Controller
     public function store(SupplierRequest $request): RedirectResponse
     {
         Supplier::create($request->validated());
-
-        return redirect()
-            ->route('suppliers.index')
-            ->with('success', 'Supplier berhasil ditambahkan.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil ditambahkan.');
     }
 
     public function show(Supplier $supplier): View
@@ -43,18 +39,12 @@ class SupplierController extends Controller
     public function update(SupplierRequest $request, Supplier $supplier): RedirectResponse
     {
         $supplier->update($request->validated());
-
-        return redirect()
-            ->route('suppliers.index')
-            ->with('success', 'Supplier berhasil diperbarui.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil diperbarui.');
     }
 
     public function destroy(Supplier $supplier): RedirectResponse
     {
         $supplier->delete();
-
-        return redirect()
-            ->route('suppliers.index')
-            ->with('success', 'Supplier berhasil dihapus.');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil dihapus.');
     }
 }
