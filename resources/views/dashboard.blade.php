@@ -48,7 +48,7 @@
                     <h5 class="mb-0">Grafik Penjualan (7 Hari Terakhir)</h5>
                 </div>
                 <div class="card-body">
-                    @if ($totalPenjualan > 0)
+                    @if (count(array_filter($chartData)) > 0)
                         <canvas id="salesChart" height="100"></canvas>
                     @else
                         <div class="text-center text-muted py-5">
@@ -130,7 +130,7 @@
 @endsection
 
 @push('scripts')
-@if ($totalPenjualan > 0)
+@if (count(array_filter($chartData)) > 0)
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {

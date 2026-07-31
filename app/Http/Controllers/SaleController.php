@@ -67,4 +67,74 @@ class SaleController extends Controller
 
         return view('sales.show', compact('sale'));
     }
+
+    public function edit(Sale $sale): View
+    {
+        $products = Product::where('stock', '>', 0)
+            ->orWhere('id', $sale->product_id)
+            ->orderBy('nama_barang')
+            ->get();
+
+        return view('sales.edit', compact('sale', 'products'));
+    }
+
+    public function update(SaleRequest $request, Sale $sale): RedirectResponse
+    {
+        try {
+            DB::transaction(function () use ($request, $sale) {
+                $product = Product::where('id', $sale->product_id)->first();
+                $newProduct = Product::where('id', $request->product_id)->lockForUpdate()->first();
+
+                $oldQty = $sale->qty;
+
+                if ($sale->product_id == $request->product_id) {
+                    $stockDiff = $request->qty - $oldQty;
+                    if ($stockDiff > 0) {
+                        if ($newProduct->stock < $stockDiff) {
+                            throw new \Exception('Stok tidak mencukupi.');
+                        }
+                        $newProduct->decrement('stock', $stockDiff);
+                    } elseif ($stockDiff < 0) {
+                        $newProduct->increment('stock', abs($stockDiff));
+                    }
+                } else {
+                    $product->increment('stock', $oldQty);
+                    if ($newProduct->stock < $request->qty) {
+                        throw new \Exception('Stok tidak mencukupi.');
+                    }
+                    $newProduct->decrement('stock', $request->qty);
+                }
+
+                $sale->update([
+                    'product_id' => $request->product_id,
+                    'qty' => $request->qty,
+                    'total_harga' => $newProduct->harga * $request->qty,
+                ]);
+            });
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', $e->getMessage() . ' Stok tersedia: ' . Product::find($request->product_id)?->stock ?? 0);
+        }
+
+        return redirect()
+            ->route('sales.index')
+            ->with('success', 'Penjualan berhasil diperbarui.');
+    }
+
+    public function destroy(Sale $sale): RedirectResponse
+    {
+        DB::transaction(function () use ($sale) {
+            $product = Product::where('id', $sale->product_id)->first();
+            if ($product) {
+                $product->increment('stock', $sale->qty);
+            }
+            $sale->delete();
+        });
+
+        return redirect()
+            ->route('sales.index')
+            ->with('success', 'Penjualan berhasil dihapus.');
+    }
 }

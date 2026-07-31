@@ -14,7 +14,7 @@ class SupplierRequest extends FormRequest
 
     public function rules(): array
     {
-        $supplierId = $this->route('supplier');
+        $supplierId = $this->route('supplier')?->id;
 
         $rules = [
             'no_supplier' => [

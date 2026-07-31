@@ -7,10 +7,12 @@
 
         <title>@yield('title', config('app.name', 'POS App'))</title>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            body { display: flex; flex-direction: column; min-height: 100vh; }
+            main { flex: 1; }
+        </style>
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -46,8 +48,6 @@
                                 {{ Auth::user()->name }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profil</a></li>
-                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -69,6 +69,7 @@
             <small class="text-muted">&copy; {{ now()->year }} POS App</small>
         </footer>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     </body>
 </html>

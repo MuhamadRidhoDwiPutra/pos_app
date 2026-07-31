@@ -16,6 +16,13 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <table class="table table-striped table-hover mb-0">
@@ -41,6 +48,12 @@
                             <td>Rp {{ number_format($purchase->total_harga, 0, ',', '.') }}</td>
                             <td>
                                 <a href="{{ route('purchases.show', $purchase) }}" class="btn btn-sm btn-info text-white">Detail</a>
+                                <a href="{{ route('purchases.edit', $purchase) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <form action="{{ route('purchases.destroy', $purchase) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus transaksi ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                </form>
                             </td>
                         </tr>
                     @empty

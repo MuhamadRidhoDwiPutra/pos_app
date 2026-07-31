@@ -57,4 +57,60 @@ class PurchaseController extends Controller
 
         return view('purchases.show', compact('purchase'));
     }
+
+    public function edit(Purchase $purchase): View
+    {
+        $suppliers = Supplier::orderBy('nama_pic')->get();
+        $products = Product::orderBy('nama_barang')->get();
+
+        return view('purchases.edit', compact('purchase', 'suppliers', 'products'));
+    }
+
+    public function update(PurchaseRequest $request, Purchase $purchase): RedirectResponse
+    {
+        DB::transaction(function () use ($request, $purchase) {
+            $product = Product::where('id', $purchase->product_id)->first();
+            $newProduct = Product::where('id', $request->product_id)->lockForUpdate()->first();
+
+            $oldQty = $purchase->qty;
+
+            if ($purchase->product_id == $request->product_id) {
+                $stockDiff = $request->qty - $oldQty;
+                if ($stockDiff > 0) {
+                    $product->increment('stock', $stockDiff);
+                } elseif ($stockDiff < 0) {
+                    $product->decrement('stock', abs($stockDiff));
+                }
+            } else {
+                $product->increment('stock', $oldQty);
+                $newProduct->decrement('stock', $request->qty);
+            }
+
+            $purchase->update([
+                'supplier_id' => $request->supplier_id,
+                'product_id' => $request->product_id,
+                'qty' => $request->qty,
+                'total_harga' => $newProduct->harga * $request->qty,
+            ]);
+        });
+
+        return redirect()
+            ->route('purchases.index')
+            ->with('success', 'Pembelian berhasil diperbarui.');
+    }
+
+    public function destroy(Purchase $purchase): RedirectResponse
+    {
+        DB::transaction(function () use ($purchase) {
+            $product = Product::where('id', $purchase->product_id)->first();
+            if ($product) {
+                $product->increment('stock', $purchase->qty);
+            }
+            $purchase->delete();
+        });
+
+        return redirect()
+            ->route('purchases.index')
+            ->with('success', 'Pembelian berhasil dihapus.');
+    }
 }

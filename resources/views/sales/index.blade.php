@@ -46,6 +46,12 @@
                             <td class="fw-bold text-success">Rp {{ number_format($sale->total_harga, 0, ',', '.') }}</td>
                             <td>
                                 <a href="{{ route('sales.show', $sale) }}" class="btn btn-sm btn-info text-white">Detail</a>
+                                <a href="{{ route('sales.edit', $sale) }}" class="btn btn-sm btn-warning">Edit</a>
+                                <form action="{{ route('sales.destroy', $sale) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus transaksi ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                </form>
                             </td>
                         </tr>
                     @empty
