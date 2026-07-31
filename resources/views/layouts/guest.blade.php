@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'POS App') }} - Login</title>
+        <title>{{ config('app.name', 'POS App') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -14,9 +14,11 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="bg-light">
-        <div class="min-vh-100 d-flex flex-column justify-content-center py-4">
-            {{ $slot }}
+    <body class="bg-secondary-subtle">
+        <div class="min-vh-100 d-flex align-items-center justify-content-center py-4">
+            <div class="w-100" style="max-width: 400px;">
+                {{ $slot }}
+            </div>
         </div>
     </body>
 </html>
