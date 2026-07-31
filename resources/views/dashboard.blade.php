@@ -48,7 +48,14 @@
                     <h5 class="mb-0">Grafik Penjualan (7 Hari Terakhir)</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="salesChart" height="100"></canvas>
+                    @if ($totalPenjualan > 0)
+                        <canvas id="salesChart" height="100"></canvas>
+                    @else
+                        <div class="text-center text-muted py-5">
+                            <p class="mb-1">Belum ada data penjualan</p>
+                            <small>Transaksi penjualan akan ditampilkan di grafik ini</small>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -123,6 +130,7 @@
 @endsection
 
 @push('scripts')
+@if ($totalPenjualan > 0)
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -167,4 +175,5 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+@endif
 @endpush

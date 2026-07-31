@@ -16,16 +16,20 @@ class SupplierRequest extends FormRequest
     {
         $supplierId = $this->route('supplier');
 
-        return [
+        $rules = [
             'no_supplier' => [
                 'required',
                 'string',
                 'max:50',
-                'unique:suppliers,no_supplier,' . $supplierId,
+                $supplierId
+                    ? 'unique:suppliers,no_supplier,' . $supplierId
+                    : 'unique:suppliers,no_supplier',
             ],
             'nama_pic' => ['required', 'string', 'max:100'],
             'alamat' => ['nullable', 'string'],
         ];
+
+        return $rules;
     }
 
     public function messages(): array

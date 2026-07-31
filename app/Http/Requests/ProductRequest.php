@@ -16,18 +16,22 @@ class ProductRequest extends FormRequest
     {
         $productId = $this->route('product');
 
-        return [
+        $rules = [
             'kode_barang' => [
                 'required',
                 'string',
                 'max:50',
-                'unique:products,kode_barang,' . $productId,
+                $productId
+                    ? 'unique:products,kode_barang,' . $productId
+                    : 'unique:products,kode_barang',
             ],
             'nama_barang' => ['required', 'string', 'max:150'],
             'tanggal_expired' => ['nullable', 'date', 'after_or_equal:today'],
             'stock' => ['required', 'integer', 'min:0'],
             'harga' => ['required', 'numeric', 'min:0'],
         ];
+
+        return $rules;
     }
 
     public function messages(): array
